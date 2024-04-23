@@ -1,0 +1,48 @@
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "{{ .Chart.Name }}-service"
+  namespace: "{{ .Values.namespace }}"
+  labels:
+    app: "{{ .Chart.Name }}"
+spec:
+  ports:
+  - name: https-{{ .Chart.Name }}
+    port: {{ .Values.port.external }} #I put port 80 as our port on the app and in docker #8080 Default port for container image
+    targetPort: {{ .Values.port.internal }}
+  #type: NodePort
+  selector:
+    app: "{{ .Chart.Name }}"
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "{{ .Chart.Name }}-ui-service"
+  namespace: "{{ .Values.namespace }}"
+  labels:
+    app: "{{ .Chart.Name }}"
+spec:
+  ports:
+  - name: https-{{ .Chart.Name }}-ui
+    port: {{ .Values.ui.port.external }} #I put port 80 as our port on the app and in docker #8080 Default port for container image
+    targetPort: {{ .Values.ui.port.internal }}
+  #type: NodePort
+  selector:
+    app: "{{ .Chart.Name }}"
+
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: redis-node-port
+  namespace: "{{ .Values.namespace }}"
+spec:
+  ports:
+  - name: redis-server
+    nodePort: 30223
+    port: 6379
+    protocol: TCP
+    targetPort: 6379
+  selector:
+    app: "{{ .Chart.Name }}"
+  type: NodePort

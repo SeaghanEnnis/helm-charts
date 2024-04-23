@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Chart.Name }}-configmap"
+  namespace:  {{ .Values.namespace }}
+  labels:
+    app: redis
+data:
+  master.conf: |
+    maxmemory 8000mb
+    maxclients 20000
+    timeout 300
+    dbfilename dump.rdb
+    dir /data
+    save "60 1"
+  slave.conf: |
+    slaveof redis-server-service.ani.svc.cluster.local 6379
+    maxmemory 8000mb
+    maxclients 20000
+    timeout 300
+    dir /data
+    save "60 1"

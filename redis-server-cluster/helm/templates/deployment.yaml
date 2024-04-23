@@ -1,0 +1,97 @@
+apiVersion: "apps/v1"
+kind: "StatefulSet"
+metadata:
+  name: "{{ .Chart.Name }}-deployment"
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: "{{ .Chart.Name }}"
+spec:
+  serviceName: "{{ .Chart.Name }}"
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "{{ .Chart.Name }}"
+  template:
+    metadata:
+      labels:
+        environment: "{{ .Values.environment }}"
+        app: "{{ .Chart.Name }}"
+    spec:
+      imagePullSecrets:
+      - name: jfrogregistrykey
+      initContainers:
+      - name: init-redis
+        image: "{{ .Values.image }}:{{ .Values.version.stable }}"
+        command:
+        - /bin/bash
+        - -c
+        - |
+          set -ex
+          # Extract pod index from hostname to generate the redis server-id.
+          hostname_regex='-([0-9]+)$'
+          if [[ `hostname` =~ ${hostname_regex} ]]; then
+            ordinal=${BASH_REMATCH[1]}
+          else
+            exit 1
+          fi
+
+          # Copy the appropriate redis config files.
+
+          config_map_path="/mnt"
+          config_destination="/etc/redis-config.conf"
+
+          if [[ ${ordinal} -eq 0 ]]; then
+            cp "${config_map_path}/master.conf" "${config_destination}"
+          else
+            cp "${config_map_path}/slave.conf" "${config_destination}"
+          fi
+        volumeMounts:
+        - name: redis-config
+          mountPath: /etc
+        - name: redis-server-configmap
+          mountPath: /mnt/
+
+      volumes:
+        - name: redis-persistent-storage
+          persistentVolumeClaim:
+            claimName: redis-pv-claim
+        - name: redis-config
+          persistentVolumeClaim:
+            claimName: redis-config-claim
+        - name: redis-server-configmap
+          configMap:
+            name: redis-server-configmap
+
+      containers:
+      - name: "{{ .Chart.Name }}"
+        image: "{{ .Values.image }}:{{ .Values.version.stable}}"
+        ports:
+        - containerPort: 6379
+          name: redis-stack
+        command:
+          - redis-stack-server
+          - "/etc/redis-config.conf"
+          - "--dir /data"
+        volumeMounts:
+          - name: redis-persistent-storage
+            mountPath: /data
+          - name: redis-config
+            mountPath: /etc
+        resources:
+          requests:
+            memory: "{{ .Values.memory_request }}"
+            cpu: "{{ .Values.cpu_request }}"
+          limits:
+            memory: "{{ .Values.memory_limit }}"
+            cpu: "{{ .Values.cpu_limit }}"
+        env:
+        - name: APP_VERSION
+          value: "{{ .Values.version.stable}}"
+        - name: SPRING_PROFILES_ACTIVE
+          value: "{{ .Values.environment }}"
+        - name: REDIS_PASSWORD
+          value: "{{ .Values.redis.password }}"
+        - name: REDIS_PORT
+          value: "{{ .Values.redis.port }}"
+        - name: REDIS_ARGS
+          value: "{{ .Values.redis.args }}"

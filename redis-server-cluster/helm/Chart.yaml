@@ -1,0 +1,6 @@
+apiVersion: v2
+description: ANI Redis Server Service
+name: redis-server
+type: application
+#version will be overidden by CI_COMMIT_TAG at deploy time in the future
+version: 0.0.5 #perhaps disregarded and only needed for twistlock

@@ -1,0 +1,24 @@
+#Developers should customize values files per enviornment to meet app needs
+#the amount of memory required when scheduling the pod on a node
+memory_request: 5G
+#the maximum amount of memory the app is allowed to use, this is a hard limit
+memory_limit: 8G
+#the amount of cpu required when scheduling the pod on a node
+cpu_request: 2
+#the maximum amount of cpu the app is allowed to use, this is a hard limit
+cpu_limit: 4
+
+environment: prod
+
+ingress:
+  subdomain: blueplanet-bpi-prod1
+  
+
+                                  # stable is assumed default
+version:                          # generally following semver standards with the exception of prod and prev-prod https://semver.org/
+  stable: latest                  # second newest major release with the latest minor and latest patch
+
+redis:
+  password: ""
+  port: 6379
+  args: "--save 60 1"

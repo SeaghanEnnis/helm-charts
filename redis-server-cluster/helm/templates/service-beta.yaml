@@ -1,0 +1,33 @@
+{{ if .Values.version.beta }}
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "{{ .Chart.Name }}-service-beta"
+  namespace: "{{ .Values.namespace }}"
+  labels:
+    app: "{{ .Chart.Name }}-beta"
+spec:
+  ports:
+  - name: https-{{ .Chart.Name }}
+    port: {{ .Values.port.external }} #I put port 80 as our port on the app and in docker #8080 Default port for container image
+    targetPort: {{ .Values.port.internal }}
+  #type: NodePort
+  selector:
+    app: "{{ .Chart.Name }}-beta"
+---
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "{{ .Chart.Name }}-ui-service-beta"
+  namespace: "{{ .Values.namespace }}"
+  labels:
+    app: "{{ .Chart.Name }}-beta"
+spec:
+  ports:
+  - name: https-{{ .Chart.Name }}-ui
+    port: {{ .Values.ui.port.external }} #I put port 80 as our port on the app and in docker #8080 Default port for container image
+    targetPort: {{ .Values.ui.port.internal }}
+  #type: NodePort
+  selector:
+    app: "{{ .Chart.Name }}-beta"
+{{ end }}

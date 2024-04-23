@@ -1,0 +1,20 @@
+#this file should contain values you'd like populated in every environment
+
+#image field should only contain the path, not the tag. Example: dishwireless.jfrog.io/docker-dev/poc/http-echo
+image: dishwireless.jfrog.io/docker-remote-dev/redis/redis-stack
+namespace: ani
+ingress:
+  hostname: redis-server
+
+version: latest
+  
+port:
+  internal: 6379 
+  external: 6379
+ui:
+  port:
+    internal: 8001
+    external: 8080
+
+version:
+  beta: false
