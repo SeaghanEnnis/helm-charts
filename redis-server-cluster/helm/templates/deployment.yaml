@@ -17,8 +17,6 @@ spec:
         environment: "{{ .Values.environment }}"
         app: "{{ .Chart.Name }}"
     spec:
-      imagePullSecrets:
-      - name: jfrogregistrykey
       initContainers:
       - name: init-redis
         image: "{{ .Values.image }}:{{ .Values.version.stable }}"
@@ -85,10 +83,6 @@ spec:
             memory: "{{ .Values.memory_limit }}"
             cpu: "{{ .Values.cpu_limit }}"
         env:
-        - name: APP_VERSION
-          value: "{{ .Values.version.stable}}"
-        - name: SPRING_PROFILES_ACTIVE
-          value: "{{ .Values.environment }}"
         - name: REDIS_PASSWORD
           value: "{{ .Values.redis.password }}"
         - name: REDIS_PORT
