@@ -14,7 +14,7 @@ data:
     dir /data
     save "60 1"
   slave.conf: |
-    slaveof redis-server-service.ani.svc.cluster.local 6379
+    slaveof redis-server-service.redis.svc.cluster.local 6379
     maxmemory 8000mb
     maxclients 20000
     timeout 300

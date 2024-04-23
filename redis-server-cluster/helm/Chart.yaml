@@ -1,5 +1,5 @@
 apiVersion: v2
-description: ANI Redis Server Service
+description: Redis Server Service
 name: redis-server
 type: application
 #version will be overidden by CI_COMMIT_TAG at deploy time in the future

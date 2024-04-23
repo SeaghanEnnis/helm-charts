@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   annotations:
   name: redis-pv-claim
-  namespace: ani
+  namespace: redis
 spec:
   accessModes:
   - ReadWriteOnce
@@ -17,7 +17,7 @@ kind: PersistentVolumeClaim
 metadata:
   annotations:
   name: redis-config-claim
-  namespace: ani
+  namespace: redis
 spec:
   accessModes:
   - ReadWriteOnce

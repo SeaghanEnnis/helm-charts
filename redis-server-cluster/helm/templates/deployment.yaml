@@ -2,7 +2,7 @@ apiVersion: "apps/v1"
 kind: "StatefulSet"
 metadata:
   name: "{{ .Chart.Name }}-deployment"
-  namespace: {{ .Values.namespace }}
+  namespace: redis
   labels:
     app: "{{ .Chart.Name }}"
 spec:
