@@ -1,0 +1,33 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "{{ .Chart.Name }}-deployment"
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: "{{ .Chart.Name }}"
+spec:
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: "{{ .Chart.Name }}"
+  template:
+    metadata:
+      labels:
+        environment: "{{ .Values.environment }}"
+        app: "{{ .Chart.Name }}"
+    spec:
+      containers:
+      - name: "{{ .Chart.Name }}"
+        image: "{{ .Values.image }}:{{ .Chart.Version }}"
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "{{ .Values.memory_request }}"
+            cpu: "{{ .Values.cpu_request }}"
+          limits:
+            memory: "{{ .Values.memory_limit }}"
+            cpu: "{{ .Values.cpu_limit }}"
+        env:
+        - name: APP_VERSION
+          value: "{{ .Chart.Version }}"
+

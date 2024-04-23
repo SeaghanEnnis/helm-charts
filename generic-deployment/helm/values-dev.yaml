@@ -1,0 +1,10 @@
+memory_request: 3G
+memory_limit: 6G
+cpu_request: 2
+cpu_limit: 6
+
+environment: dev
+
+replicas: 
+  min: 1
+  max: 1

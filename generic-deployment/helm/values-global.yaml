@@ -1,0 +1,6 @@
+image: <Image>
+namespace: deployment
+
+port:
+  internal: 8080
+  external: 8080
