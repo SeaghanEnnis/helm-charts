@@ -1,0 +1,7 @@
+image: dishwireless.jfrog.io/docker-dev/ingest-service
+namespace: nginx
+ingress:
+  hostname: ingress
+  subdomain: '{{ .Values.environment }}.aws.com'
+
+externalport: 8080

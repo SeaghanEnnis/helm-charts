@@ -1,0 +1,4 @@
+apiVersion: v2
+description: nginx
+name: reverse-proxy
+version: 0.0.1

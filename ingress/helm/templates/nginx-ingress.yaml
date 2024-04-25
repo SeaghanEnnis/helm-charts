@@ -1,0 +1,98 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Forwarded-For $http_x_forwarded_for";
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "90"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "90"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "90"
+  labels:
+    app: nginx
+    argocd.app.dishcloud.io/name: nginx-{{ .Values.environment }}
+  name: nginx-ingress
+  namespace: nginx
+spec:
+  rules:
+    - host: {{ .Values.subdomain }}
+      http:
+        paths:
+        - backend:
+            service:
+              name: api-service
+              port:
+                number: {{ .Values.externalport }}
+          path: /api(/|$)(.*)
+          pathType: Prefix
+    - host: {{ .Values.subdomain }}
+      http:
+        paths:
+        - backend:
+            service:
+              name: api-service-2
+              port:
+                number: {{ .Values.externalport }}
+          path: /api/v2(/|$)(.*)
+          pathType: Prefix
+    - host: {{ .Values.subdomain }}
+      http:
+        paths:
+        - backend:
+            service:
+              name: config-server-service
+              port:
+                number: {{ .Values.externalport }}
+          path: /configserver(/|$)(.*)
+          pathType: Prefix
+    - host: {{ .Values.subdomain }}
+      http:
+        paths:
+        - backend:
+            service:
+              name: kafka-adapter-service
+              port:
+                number: {{ .Values.externalport }}
+          path: /kafka(/|$)(.*)
+          pathType: Prefix
+    - host: {{ .Values.subdomain }}
+      http:
+        paths:
+        - backend:
+            service:
+              name: etl-service
+              port:
+                number: {{ .Values.externalport }}
+          path: /transformation(/|$)(.*)
+          pathType: Prefix
+    - host: {{ .Values.ingress.subdomain }}
+      http:
+        paths:
+        - backend:
+            service:
+              name: calculation-service
+              port:
+                number: {{ .Values.externalport }}
+          path: /calculation(/|$)(.*)
+          pathType: Prefix
+    - host: {{ .Values.ingress.subdomain }}
+      http:
+        paths:
+        - backend:
+            service:
+              name: redis-server-ui-service
+              port:
+                number: {{ .Values.externalport }}
+          path: /redis(/|$)(.*)
+          pathType: Prefix
+  tls:
+  - hosts:
+    - {{ .Values.subdomain }}
+status:
+  loadBalancer:
+    ingress:
+    - hostname: {{ .Values.loadbalancer }}

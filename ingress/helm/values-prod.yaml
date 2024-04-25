@@ -1,0 +1,4 @@
+
+environment: prod
+loadbalancer: .....elb.us-west-2.amazonaws.com
+
